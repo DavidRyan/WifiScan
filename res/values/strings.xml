@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WifiScanActivity</string>
+    <string name="scan_button_text">Scan</string>
+    <string name="clear_button_text">Clear Configuration</string>
+    <string name="title">QR Wifi Scanner</string>
 </resources>

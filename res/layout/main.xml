@@ -5,11 +5,22 @@
         android:layout_height="fill_parent" 
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="#FFC973">
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="#6c8cd5"
+                android:text="@string/title"
+                android:textSize="20dip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
         <LinearLayout 
             android:orientation="vertical" 
             android:layout_height="wrap_content" 
             android:layout_width="match_parent" 
-            android:layout_marginTop="60dip">
+            android:layout_marginTop="30dip">
             <RelativeLayout 
                 android:layout_height="100dip" 
                 android:id="@+id/relativeLayout1" 
@@ -44,7 +55,8 @@
                     android:layout_height="100dip"  
                     android:layout_centerHorizontal="true" 
                     android:layout_marginBottom="50dip"
-                    android:background="#6c8cd5"/>
+                    android:background="#6c8cd5"
+                    android:text="@string/scan_button_text"/>
             </RelativeLayout>
             <RelativeLayout 
                 android:layout_height="wrap_content" 
