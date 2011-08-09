@@ -2,10 +2,16 @@ package com.david.wifi;
 
 import android.app.Activity;
 import android.os.Bundle;
-
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.widget.Button;
+import android.widget.TextView;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.util.Log;
 
  public class WifiScanActivity extends Activity {
@@ -16,12 +22,21 @@ import android.util.Log;
     private static final int QR_REQUEST = 1;
     private static final String WIFI_PREFIX = "@@";
 
+    Button mScanButton;
+    TextView mNetworkName;
+    TextView mNetworkStatus;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        launchQrScanner();
+
+        mNetworkName = (TextView) findViewById(R.id.network_name); 
+        mNetworkStatus = (TextView) findViewById(R.id.network_status); 
+        mScanButton = (Button) findViewById(R.id.scan_button);
+        mScanButton.setOnClickListener(listener);
+
     }
 
     private void launchQrScanner() {
@@ -45,39 +60,35 @@ import android.util.Log;
         
         if(aResult.startsWith(WIFI_PREFIX)) {
             String subString = aResult.substring(3);
-            //Log.d(TAG, subString);
-            String[] split = subString.split(":");
+            Log.d(TAG, subString);
+            String[] split = subString.split(":");       
             Log.d(TAG, split[0]);
             Log.d(TAG, split[1]);
-            split[0] = "Cam loves anal beads, as well";
-            split[1] = "Crookshanks";
 
+            mNetworkName.setText("Network: " + split[0]);
             saveInformationToWireless(split);
 
         } else {
-            //toast it failed
+            float sz = 20;
+            mNetworkName.setTextSize(sz);
+            mNetworkName.setText("QR Code Invalid"); 
         }
     }
 
     private void saveInformationToWireless(String[] aInfo) {
-
         WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiConfiguration wc = new WifiConfiguration(); 
-        wc.SSID = "\"" + Info[0] + "\"";
-        wc.hiddenSSID = true;
+        wc.SSID = "\"" + aInfo[0] + "\"";
+        wc.hiddenSSID = false;
         wc.status = WifiConfiguration.Status.DISABLED;     
         wc.priority = 40;
-        wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN); 
         wc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
         wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
         wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
-        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+        wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
 
-        wc.wepKeys[0] = "\"" + aInfo[1] + "\"";
+        wc.preSharedKey = "\"" + aInfo[1] + "\"";
         wc.wepTxKeyIndex = 0;
 
         WifiManager  wifiManag = (WifiManager) this.getSystemService(WIFI_SERVICE);
@@ -87,7 +98,24 @@ import android.util.Log;
         boolean es = wifi.saveConfiguration();
         Log.d(TAG, "saveConfiguration returned " + es );
         boolean b = wifi.enableNetwork(res, true);   
-        Log.d(TAG, "enableNetwork returned " + b );  
+        Log.d(TAG, "enableNetwork returned " + b ); 
+        if(b) { 
+            mNetworkStatus.setText("Status: Connected");
+        } else {
+            mNetworkStatus.setText("Status: Unable to connect.");
+        }
     }
+
+    public OnClickListener listener = new OnClickListener() {
+        public void onClick(View aView) {
+            switch (aView.getId()) {
+                case R.id.scan_button:
+                    launchQrScanner();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 }
 
